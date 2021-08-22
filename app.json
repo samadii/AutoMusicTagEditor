@@ -1,0 +1,28 @@
+{
+  "name": "AutoMusicTagEditor",
+  "env": {
+    "DYNAMIC_CAPTION": {
+      "description": "(Optional) Set this to TRUE if you want a dynamic caption be added to the musics.",
+      "value": "TRUE",
+      "required": false
+    },
+    "CUSTOM_TAG": {
+      "description": "(Optional) Add a username to be appended to the music tags",
+      "value": "@my_channel",
+      "required": false
+    },
+    "CHANNEL_ID": {
+      "description": "Your telegram channel id, get it from @chnlidbot",
+      "value": "-1001000431759"
+    },
+    "BOT_TOKEN": {
+      "description": "Your bot token, as a string.",
+      "value": ""
+}
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}
