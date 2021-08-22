@@ -3,9 +3,7 @@ import os
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from music_tag import load_file
 
-
 CAPTION = os.environ.get("DYNAMIC_CAPTION")
-channel = os.environ.get("CHANNEL_ID")
 if 'CUSTOM_TAG' in os.environ:
     custom_tag = os.environ.get("CUSTOM_TAG")
 else:
@@ -115,7 +113,7 @@ def file_handler(update, context):
         caption = update.message['caption']
     try:
         context.bot.sendAudio(
-            chat_id = channel,
+            chat_id = update.message.chat_id,
             filename = filename,
             caption = caption, 
             audio = open('file.mp3', 'rb')
@@ -125,7 +123,7 @@ def file_handler(update, context):
         
 def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
-    update.message.reply_text("Hi, Add me to the specified channel and then send the musics here, i will post them.")
+    update.message.reply_text("Hi, I am Music Tag Editor Bot.\n\nSend me some musics, I will remove almost all usernames in the music tags.")
 
 
 if __name__=='__main__':
