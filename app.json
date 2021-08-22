@@ -11,10 +11,6 @@
       "value": "@my_channel",
       "required": false
     },
-    "CHANNEL_ID": {
-      "description": "Your telegram channel id, get it from @chnlidbot",
-      "value": "-1001000431759"
-    },
     "BOT_TOKEN": {
       "description": "Your bot token, as a string.",
       "value": ""
