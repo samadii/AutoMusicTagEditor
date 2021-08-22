@@ -1,6 +1,6 @@
 ## Music Tag Editor Bot (MusicChannelManagerV2)
 
-A Telegram Music Tag Editor Bot that can remove almost all usernames in music files and add own username instead.
+A Telegram Music Tag Editor Bot that can remove almost all usernames in the music tags and add own username instead.
 
 ## Deploy to Heroku
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/samadii/AutoMusicTagEditor)
