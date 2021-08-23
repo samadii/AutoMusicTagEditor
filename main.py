@@ -5,12 +5,12 @@ from music_tag import load_file
 
 CAPTION = os.environ.get("DYNAMIC_CAPTION")
 if 'CUSTOM_TAG' in os.environ:
-    custom_tag = os.environ.get("CUSTOM_TAG")
+    custom_tag = " [" + os.environ.get("CUSTOM_TAG") + "]"
 else:
     custom_tag = " "
 
 
-def file_handler(update, context):
+def tag(update, context):
     fname = update.message['audio']['file_name']
     file_id = update.message['audio']['file_id']
     file = context.bot.get_file(file_id)
@@ -20,6 +20,8 @@ def file_handler(update, context):
     a = f"{music['artist']}"
     al = f"{music['album']}"
     g = f"{music['genre']}"
+    c = f"{music['comment']}"
+    l = f"{music['lyrics']}"
 
     if fname.__contains__("@") or fname.__contains__("["):
         first = fname.split(' ')[0]
@@ -35,6 +37,36 @@ def file_handler(update, context):
             filename = fname.split("@")[-2]
     else:
         filename = fname
+    
+    if l.__contains__("@") or l.__contains__("["):
+        first = l.split(' ')[0]
+        if "@" in first:
+            lyrics = l.split(f'{first}', -1)
+        elif l.__contains__("(@") and not "@" in first:
+            lyrics = l.split("(@")[-2]
+        elif l.__contains__("[@") and not "@" in first:
+            lyrics = l.split("[@")[-2]
+        elif l.__contains__("[") and not "@" in first:
+            lyrics = l.split("[")[-2]
+        elif (not "@" in first) and (not l.__contains__("(@") or l.__contains__("[") or l.__contains__("[@")):
+            lyrics = l.split("@")[-2]
+    else:
+        lyrics = l
+
+    if c.__contains__("@") or c.__contains__("["):
+        first = c.split(' ')[0]
+        if "@" in first:
+            comment = c.split(f'{first}', -1)
+        elif c.__contains__("(@") and not "@" in first:
+            comment = c.split("(@")[-2]
+        elif c.__contains__("[@") and not "@" in first:
+            comment = c.split("[@")[-2]
+        elif c.__contains__("[") and not "@" in first:
+            comment = c.split("[")[-2]
+        elif (not "@" in first) and (not c.__contains__("(@") or c.__contains__("[") or c.__contains__("[@")):
+            comment = c.split("@")[-2]
+    else:
+        comment = c
 
     if g.__contains__("@") or g.__contains__("["):
         first = g.split(' ')[0]
@@ -82,7 +114,7 @@ def file_handler(update, context):
         album = al
 
    
-    if a.__contains__("@") or a.__contains__("["):
+    if a.__contains__("@") or a.__contains__("[") or a.__contains__("("):
         first = a.split(' ')[0]
         if "@" in first:
             artist = a.split(f'{first}', -1)
@@ -92,19 +124,25 @@ def file_handler(update, context):
             artist = a.split("[@")[-2]
         elif a.__contains__("[") and not "@" in first:
             artist = a.split("[")[-2]
+        elif a.__contains__("(") and not "@" in first:
+            artist = a.split("(")[-2]
         elif (not "@" in first) and (not a.__contains__("(@") or a.__contains__("[") or a.__contains__("[@")):
             artist = a.split("@")[-2]
     else:
         artist = a
 
+    music.remove_tag('lyrics')
+    music.remove_tag('comment')
     music.remove_tag('artist')
     music.remove_tag('title')
     music.remove_tag('album')
     music.remove_tag('genre')
-    music['artist'] = artist + " [" + custom_tag + "]"
-    music['title'] = title + " [" + custom_tag + "]"
-    music['album'] = album + " [" + custom_tag + "]"
-    music['genre'] = genre + " [" + custom_tag + "]"
+    music['artist'] = artist + custom_tag
+    music['title'] = title + custom_tag
+    music['album'] = album + custom_tag
+    music['genre'] = genre + custom_tag
+    music['comment'] = comment + custom_tag
+    music['lyrics'] = lyrics + custom_tag
     music.save()
 
     if CAPTION == "TRUE":
@@ -130,6 +168,6 @@ if __name__=='__main__':
     token = os.environ.get('BOT_TOKEN')
     updater = Updater(token, use_context=True)
     dispatcher = updater.dispatcher
-    dispatcher.add_handler(MessageHandler(Filters.audio, file_handler))
+    dispatcher.add_handler(MessageHandler(Filters.audio, tag))
     dispatcher.add_handler(CommandHandler("start", start))
     updater.start_polling()
