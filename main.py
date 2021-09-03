@@ -23,7 +23,7 @@ def tag(update, context):
     c = f"{music['comment']}"
     l = f"{music['lyrics']}"
 
-if fname.split(' ')[0].__contains__("@") or fname.split(' ')[0].__contains__(".me/"):
+    if fname.split(' ')[0].__contains__("@") or fname.split(' ')[0].__contains__(".me/"):
         fname = fname.split(f"{fname.split(' ')[0]}")[+1]
     if (fname.__contains__("@") or fname.__contains__(".me/")) and ((not fname.split(' ')[0].__contains__("@")) and (not fname.split(' ')[0].__contains__(".me/"))):
         fname = fname.split(f"{fname.rsplit(' ', 1)[1]}")[0]
