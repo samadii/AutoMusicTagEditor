@@ -25,37 +25,37 @@ def tag(update, context):
 
     if fname.split(' ')[0].__contains__("@") or fname.split(' ')[0].__contains__(".me/"):
         fname = fname.split(f"{fname.split(' ')[0]}")[+1]
-    if (fname.__contains__("@") or fname.__contains__(".me/")) and ((not fname.split(' ')[0].__contains__("@")) and (not fname.split(' ')[0].__contains__(".me/"))):
+    elif (fname.__contains__("@") or fname.__contains__(".me/")) and ((not fname.split(' ')[0].__contains__("@")) and (not fname.split(' ')[0].__contains__(".me/"))):
         fname = fname.split(f"{fname.rsplit(' ', 1)[1]}")[0]
 
     if a.split(' ')[0].__contains__("@") or a.split(' ')[0].__contains__(".me/"):
         a = a.split(f"{a.split(' ')[0]}")[+1]
-    if (a.__contains__("@") or a.__contains__(".me/")) and ((not a.split(' ')[0].__contains__("@")) and (not a.split(' ')[0].__contains__(".me/"))):
+    elif (a.__contains__("@") or a.__contains__(".me/")) and ((not a.split(' ')[0].__contains__("@")) and (not a.split(' ')[0].__contains__(".me/"))):
         a = a.split(f"{a.rsplit(' ', 1)[1]}")[0]
      
     if al.split(' ')[0].__contains__("@") or al.split(' ')[0].__contains__(".me/"):
         al = al.split(f"{al.split(' ')[0]}")[+1]
-    if (al.__contains__("@") or al.__contains__(".me/")) and ((not al.split(' ')[0].__contains__("@")) and (not al.split(' ')[0].__contains__(".me/"))):
+    elif (al.__contains__("@") or al.__contains__(".me/")) and ((not al.split(' ')[0].__contains__("@")) and (not al.split(' ')[0].__contains__(".me/"))):
         al = al.split(f"{al.rsplit(' ', 1)[1]}")[0]
 
     if c.split(' ')[0].__contains__("@") or c.split(' ')[0].__contains__(".me/"):
         c = c.split(f"{c.split(' ')[0]}")[+1]
-    if (c.__contains__("@") or c.__contains__(".me/")) and ((not c.split(' ')[0].__contains__("@")) and (not c.split(' ')[0].__contains__(".me/"))):
+    elif (c.__contains__("@") or c.__contains__(".me/")) and ((not c.split(' ')[0].__contains__("@")) and (not c.split(' ')[0].__contains__(".me/"))):
         c = c.split(f"{c.rsplit(' ', 1)[1]}")[0]
 
     if l.split(' ')[0].__contains__("@") or l.split(' ')[0].__contains__(".me/"):
         l = l.split(f"{l.split(' ')[0]}")[+1]
-    if (l.__contains__("@") or l.__contains__(".me/")) and ((not l.split(' ')[0].__contains__("@")) and (not l.split(' ')[0].__contains__(".me/"))):
+    elif (l.__contains__("@") or l.__contains__(".me/")) and ((not l.split(' ')[0].__contains__("@")) and (not l.split(' ')[0].__contains__(".me/"))):
         l = l.split(f"{l.rsplit(' ', 1)[1]}")[0]
 
     if t.split(' ')[0].__contains__("@") or t.split(' ')[0].__contains__(".me/"):
         t = t.split(f"{t.split(' ')[0]}")[+1]
-    if (t.__contains__("@") or t.__contains__(".me/")) and ((not t.split(' ')[0].__contains__("@")) and (not t.split(' ')[0].__contains__(".me/"))):
+    elif (t.__contains__("@") or t.__contains__(".me/")) and ((not t.split(' ')[0].__contains__("@")) and (not t.split(' ')[0].__contains__(".me/"))):
         t = t.split(f"{t.rsplit(' ', 1)[1]}")[0]
 
     if g.split(' ')[0].__contains__("@") or g.split(' ')[0].__contains__(".me/"):
         g = g.split(f"{g.split(' ')[0]}")[+1]
-    if (g.__contains__("@") or g.__contains__(".me/")) and ((not g.split(' ')[0].__contains__("@")) and (not g.split(' ')[0].__contains__(".me/"))):
+    elif (g.__contains__("@") or g.__contains__(".me/")) and ((not g.split(' ')[0].__contains__("@")) and (not g.split(' ')[0].__contains__(".me/"))):
         g = g.split(f"{g.rsplit(' ', 1)[1]}")[0]
 
     music.remove_tag('lyrics')
