@@ -1,6 +1,6 @@
-## Music Tag Editor Bot
+## Auto Music Tag Bot
 
-A Telegram Music Tag Editor Bot that can remove almost all usernames in the music tags and add own username instead. It can also add a dynamic caption to musics.
+A Telegram auto Music Tag Editor Bot that can remove almost all usernames in the music tags and add own username instead. It can also add a dynamic caption to musics.
 
 
 The dynamic caption will be in this format :
