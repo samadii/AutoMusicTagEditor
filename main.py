@@ -1,28 +1,70 @@
-from telegram import Update
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import os
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+import io
+from PIL import Image
 from music_tag import load_file
 
+
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
+API_ID = os.environ.get("API_ID")
+API_HASH = os.environ.get("API_HASH")
 CAPTION = os.environ.get("DYNAMIC_CAPTION")
 if 'CUSTOM_TAG' in os.environ:
     custom_tag = " [" + os.environ.get("CUSTOM_TAG") + "]"
 else:
     custom_tag = " "
 
+Bot = Client(
+    "Bot",
+    bot_token = BOT_TOKEN,
+    api_id = API_ID,
+    api_hash = API_HASH
+)
 
-def tag(update, context):
-    fname = update.message['audio']['file_name']
-    file_id = update.message['audio']['file_id']
-    file = context.bot.get_file(file_id)
-    file.download('file.mp3')
-    music = load_file("file.mp3")
+
+START_TXT = """
+Hi {}, I am Auto Music Tagger Bot.
+I will remove all usernames in the music tags automatically, and append your own username to music if you defined it already.
+
+Send a music to get started.
+"""
+
+START_BTN = InlineKeyboardMarkup(
+        [[
+        InlineKeyboardButton('Source Code', url='https://github.com/samadii/MusicChannelManagerV2'),
+        ]]
+    )
+
+
+@Bot.on_message(filters.command(["start"]))
+async def start(bot, update):
+    text = START_TXT.format(update.from_user.mention)
+    reply_markup = START_BTN
+    await update.reply_text(
+        text=text,
+        disable_web_page_preview=True,
+        reply_markup=reply_markup
+    )
+
+   
+@Bot.on_message(filters.private & filters.audio)
+async def tag(bot, m):
+    fname = m.audio.file_name
+    m = await bot.get_messages(m.chat.id, m.message_id)
+    await m.download(file_name="temp/file.mp3")
+    music = load_file("temp/file.mp3")
     t = f"{music['title']}"
     a = f"{music['artist']}"
     al = f"{music['album']}"
     g = f"{music['genre']}"
     c = f"{music['comment']}"
     l = f"{music['lyrics']}"
-
+    ar = music['artwork']
+    image_data = ar.value.data
+    img = Image.open(io.BytesIO(image_data))
+    img.save("artwork.jpg")
+  
     if fname.split(' ')[0].__contains__("@") or fname.split(' ')[0].__contains__(".me/"):
         fname = fname.split(f"{fname.split(' ')[0]}")[+1]
     elif (fname.__contains__("@") or fname.__contains__(".me/")) and ((not fname.split(' ')[0].__contains__("@")) and (not fname.split(' ')[0].__contains__(".me/"))):
@@ -58,9 +100,9 @@ def tag(update, context):
     elif (g.__contains__("@") or g.__contains__(".me/")) and ((not g.split(' ')[0].__contains__("@")) and (not g.split(' ')[0].__contains__(".me/"))):
         g = g.split(f"{g.rsplit(' ', 1)[1]}")[0]
 
-    music.remove_tag('lyrics')
     music.remove_tag('comment')
     music.remove_tag('artist')
+    music.remove_tag('lyrics')
     music.remove_tag('title')
     music.remove_tag('album')
     music.remove_tag('genre')
@@ -71,30 +113,19 @@ def tag(update, context):
     music['comment'] = c + custom_tag
     music['lyrics'] = l + custom_tag
     music.save()
-
     if CAPTION == "TRUE":
         caption = "✏️ Title: " + t + "\n" + "👤 Artist: " + a + "\n" + "💽 Album: " + al + "\n" + "🎼 Genre: " + g
     else:
-        caption = update.message['caption']
+        caption = m.caption if m.caption else " "
     try:
-        context.bot.sendAudio(
-            chat_id = update.message.chat_id,
-            filename = fname,
-            caption = caption, 
-            audio = open('file.mp3', 'rb')
+        await bot.send_audio(
+            chat_id=m.chat.id,
+            file_name=fname + ".mp3",
+            caption=caption,
+            thumb=open('artwork.jpg', 'rb'),
+            audio="temp/file.mp3"
         )
     except Exception as e:
         print(e)
-        
-def start(update: Update, context: CallbackContext) -> None:
-    """Send a message when the command /start is issued."""
-    update.message.reply_text("Hi, I am Music Tag Editor Bot.\n\nSend me some musics, I will remove almost all usernames in the music tags.")
 
-
-if __name__=='__main__':
-    token = os.environ.get('BOT_TOKEN')
-    updater = Updater(token, use_context=True)
-    dispatcher = updater.dispatcher
-    dispatcher.add_handler(MessageHandler(Filters.audio, tag))
-    dispatcher.add_handler(CommandHandler("start", start))
-    updater.start_polling()
+Bot.run()
