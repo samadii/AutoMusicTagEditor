@@ -1,2 +1,4 @@
-python-telegram-bot
+pyrogram
+tgcrypto
 music_tag
+Pillow
