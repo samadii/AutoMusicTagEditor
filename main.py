@@ -51,8 +51,7 @@ async def start(bot, update):
 @Bot.on_message(filters.private & filters.audio)
 async def tag(bot, m):
     fname = m.audio.file_name
-    m = await bot.get_messages(m.chat.id, m.message_id)
-    await m.download(file_name="temp/file.mp3")
+    await m.download("temp/file.mp3")
     music = load_file("temp/file.mp3")
     t = f"{music['title']}"
     a = f"{music['artist']}"
@@ -60,10 +59,13 @@ async def tag(bot, m):
     g = f"{music['genre']}"
     c = f"{music['comment']}"
     l = f"{music['lyrics']}"
-    ar = music['artwork']
-    image_data = ar.value.data
-    img = Image.open(io.BytesIO(image_data))
-    img.save("artwork.jpg")
+    try:
+        artwork = music['artwork']
+        image_data = artwork.value.data
+        img = Image.open(io.BytesIO(image_data))
+        img.save("artwork.jpg")
+    except ValueError:
+        artwork = None
   
     if fname.split(' ')[0].__contains__("@") or fname.split(' ')[0].__contains__(".me/"):
         fname = fname.split(f"{fname.split(' ')[0]}")[+1]
@@ -113,19 +115,39 @@ async def tag(bot, m):
     music['comment'] = c + custom_tag
     music['lyrics'] = l + custom_tag
     music.save()
+
     if CAPTION == "TRUE":
         caption = "✏️ Title: " + t + "\n" + "👤 Artist: " + a + "\n" + "💽 Album: " + al + "\n" + "🎼 Genre: " + g
     else:
         caption = m.caption if m.caption else " "
-    try:
-        await bot.send_audio(
-            chat_id=m.chat.id,
-            file_name=fname + ".mp3",
-            caption=caption,
-            thumb=open('artwork.jpg', 'rb'),
-            audio="temp/file.mp3"
-        )
-    except Exception as e:
-        print(e)
+
+    if artwork is not None:
+        try:
+            await bot.send_audio(
+                chat_id=m.chat.id,
+                file_name=fname,
+                performer=a,
+                title=t,
+                duration=m.audio.duration,
+                caption=caption,
+                thumb=open('artwork.jpg', 'rb'),
+                audio='temp/file.mp3'
+            )
+        except Exception as e:
+            print(e)
+    elif artwork is None:
+        try:
+            await bot.send_audio(
+                chat_id=m.chat.id,
+                file_name=fname,
+                performer=a,
+                title=t,
+                duration=m.audio.duration,
+                caption=caption,
+                audio='temp/file.mp3'
+            )
+        except Exception as e:
+            print(e)
+
 
 Bot.run()
