@@ -1,9 +1,10 @@
-from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import os
 import io
+import re
 from PIL import Image
 from music_tag import load_file
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
@@ -67,40 +68,40 @@ async def tag(bot, m):
     except ValueError:
         artwork = None
   
-    if fname.split(' ')[0].__contains__("@") or fname.split(' ')[0].__contains__(".me/"):
-        fname = fname.split(f"{fname.split(' ')[0]}")[+1]
-    elif (fname.__contains__("@") or fname.__contains__(".me/")) and ((not fname.split(' ')[0].__contains__("@")) and (not fname.split(' ')[0].__contains__(".me/"))):
-        fname = fname.split(f"{fname.rsplit(' ', 1)[1]}")[0]
+    if fname.__contains__("@") or fname.__contains__(".me/"):
+        fname = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', fname).replace('  ', ' ')
+    if fname.startswith(' '):
+        fname = fname.split(' ', 1)[+1]
 
-    if a.split(' ')[0].__contains__("@") or a.split(' ')[0].__contains__(".me/"):
-        a = a.split(f"{a.split(' ')[0]}")[+1]
-    elif (a.__contains__("@") or a.__contains__(".me/")) and ((not a.split(' ')[0].__contains__("@")) and (not a.split(' ')[0].__contains__(".me/"))):
-        a = a.split(f"{a.rsplit(' ', 1)[1]}")[0]
-     
-    if al.split(' ')[0].__contains__("@") or al.split(' ')[0].__contains__(".me/"):
-        al = al.split(f"{al.split(' ')[0]}")[+1]
-    elif (al.__contains__("@") or al.__contains__(".me/")) and ((not al.split(' ')[0].__contains__("@")) and (not al.split(' ')[0].__contains__(".me/"))):
-        al = al.split(f"{al.rsplit(' ', 1)[1]}")[0]
+    if a.__contains__("@") or a.__contains__(".me/"):
+        a = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', a).replace('  ', ' ')
+    if a.startswith(' '):
+        a = a.split(' ', 1)[+1]
 
-    if c.split(' ')[0].__contains__("@") or c.split(' ')[0].__contains__(".me/"):
-        c = c.split(f"{c.split(' ')[0]}")[+1]
-    elif (c.__contains__("@") or c.__contains__(".me/")) and ((not c.split(' ')[0].__contains__("@")) and (not c.split(' ')[0].__contains__(".me/"))):
-        c = c.split(f"{c.rsplit(' ', 1)[1]}")[0]
+    if g.__contains__("@") or g.__contains__(".me/"):
+        g = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', g).replace('  ', ' ')
+    if g.startswith(' '):
+        g = g.split(' ', 1)[+1]
 
-    if l.split(' ')[0].__contains__("@") or l.split(' ')[0].__contains__(".me/"):
-        l = l.split(f"{l.split(' ')[0]}")[+1]
-    elif (l.__contains__("@") or l.__contains__(".me/")) and ((not l.split(' ')[0].__contains__("@")) and (not l.split(' ')[0].__contains__(".me/"))):
-        l = l.split(f"{l.rsplit(' ', 1)[1]}")[0]
+    if al.__contains__("@") or al.__contains__(".me/"):
+        al = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', al).replace('  ', ' ')
+    if al.startswith(' '):
+        al = al.split(' ', 1)[+1]
 
-    if t.split(' ')[0].__contains__("@") or t.split(' ')[0].__contains__(".me/"):
-        t = t.split(f"{t.split(' ')[0]}")[+1]
-    elif (t.__contains__("@") or t.__contains__(".me/")) and ((not t.split(' ')[0].__contains__("@")) and (not t.split(' ')[0].__contains__(".me/"))):
-        t = t.split(f"{t.rsplit(' ', 1)[1]}")[0]
+    if t.__contains__("@") or t.__contains__(".me/"):
+        t = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', t).replace('  ', ' ')
+    if t.startswith(' '):
+        t = t.split(' ', 1)[+1]
 
-    if g.split(' ')[0].__contains__("@") or g.split(' ')[0].__contains__(".me/"):
-        g = g.split(f"{g.split(' ')[0]}")[+1]
-    elif (g.__contains__("@") or g.__contains__(".me/")) and ((not g.split(' ')[0].__contains__("@")) and (not g.split(' ')[0].__contains__(".me/"))):
-        g = g.split(f"{g.rsplit(' ', 1)[1]}")[0]
+    if l.__contains__("@") or l.__contains__(".me/"):
+        l = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', l).replace('  ', ' ')
+    if l.startswith(' '):
+        l = l.split(' ', 1)[+1]
+
+    if c.__contains__("@") or c.__contains__(".me/"):
+        c = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', c).replace('  ', ' ')
+    if c.startswith(' '):
+        c = c.split(' ', 1)[+1]
 
     music.remove_tag('comment')
     music.remove_tag('artist')
@@ -121,8 +122,8 @@ async def tag(bot, m):
     else:
         caption = m.caption if m.caption else " "
 
-    if artwork is not None:
-        try:
+    try:
+        if artwork is not None:
             await bot.send_audio(
                 chat_id=m.chat.id,
                 file_name=fname,
@@ -133,10 +134,7 @@ async def tag(bot, m):
                 thumb=open('artwork.jpg', 'rb'),
                 audio='temp/file.mp3'
             )
-        except Exception as e:
-            print(e)
-    elif artwork is None:
-        try:
+        elif artwork is None:
             await bot.send_audio(
                 chat_id=m.chat.id,
                 file_name=fname,
@@ -146,8 +144,8 @@ async def tag(bot, m):
                 caption=caption,
                 audio='temp/file.mp3'
             )
-        except Exception as e:
-            print(e)
+    except Exception as e:
+        print(e)
 
 
 Bot.run()
