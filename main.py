@@ -33,7 +33,7 @@ Send a music to get started.
 
 START_BTN = InlineKeyboardMarkup(
         [[
-        InlineKeyboardButton('Source Code', url='https://github.com/samadii/MusicChannelManagerV2'),
+        InlineKeyboardButton('Source Code', url='https://github.com/samadii/AutoMusicTagEditor'),
         ]]
     )
 
