@@ -50,16 +50,11 @@ async def start(bot, update):
 
    
 @Bot.on_message(filters.private & filters.audio)
-async def tag(bot, m):
+async def autotag(bot, m):
     fname = m.audio.file_name
     await m.download("temp/file.mp3")
     music = load_file("temp/file.mp3")
-    t = f"{music['title']}"
-    a = f"{music['artist']}"
-    al = f"{music['album']}"
-    g = f"{music['genre']}"
-    c = f"{music['comment']}"
-    l = f"{music['lyrics']}"
+
     try:
         artwork = music['artwork']
         image_data = artwork.value.data
@@ -68,53 +63,29 @@ async def tag(bot, m):
     except ValueError:
         artwork = None
   
-    if fname.__contains__("@") or fname.__contains__(".me/"):
-        fname = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', fname).replace('  ', ' ')
-    if fname.startswith(' '):
-        fname = fname.split(' ', 1)[+1]
-
-    if a.__contains__("@") or a.__contains__(".me/"):
-        a = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', a).replace('  ', ' ')
-    if a.startswith(' '):
-        a = a.split(' ', 1)[+1]
-
-    if g.__contains__("@") or g.__contains__(".me/"):
-        g = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', g).replace('  ', ' ')
-    if g.startswith(' '):
-        g = g.split(' ', 1)[+1]
-
-    if al.__contains__("@") or al.__contains__(".me/"):
-        al = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', al).replace('  ', ' ')
-    if al.startswith(' '):
-        al = al.split(' ', 1)[+1]
-
-    if t.__contains__("@") or t.__contains__(".me/"):
-        t = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', t).replace('  ', ' ')
-    if t.startswith(' '):
-        t = t.split(' ', 1)[+1]
-
-    if l.__contains__("@") or l.__contains__(".me/"):
-        l = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', l).replace('  ', ' ')
-    if l.startswith(' '):
-        l = l.split(' ', 1)[+1]
-
-    if c.__contains__("@") or c.__contains__(".me/"):
-        c = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', c).replace('  ', ' ')
-    if c.startswith(' '):
-        c = c.split(' ', 1)[+1]
-
+    fname = get_cleaned_tags(fname)
+    title = get_cleaned_tags(f"{music['title']}")
+    artist = get_cleaned_tags(f"{music['artist']}")
+    album = get_cleaned_tags(f"{music['album']}")
+    genre = get_cleaned_tags(f"{music['genre']}")
+    comment = get_cleaned_tags(f"{music['comment']}")
+    lyrics = get_cleaned_tags(f"{music['lyrics']}")
+    
+    # remove old tags
     music.remove_tag('comment')
     music.remove_tag('artist')
     music.remove_tag('lyrics')
     music.remove_tag('title')
     music.remove_tag('album')
     music.remove_tag('genre')
-    music['artist'] = a + custom_tag
-    music['title'] = t + custom_tag
-    music['album'] = al + custom_tag
-    music['genre'] = g + custom_tag
-    music['comment'] = c + custom_tag
-    music['lyrics'] = l + custom_tag
+    
+    # apply new tags
+    music['artist'] = artist + custom_tag
+    music['title'] = title + custom_tag
+    music['album'] = album + custom_tag
+    music['genre'] = genre + custom_tag
+    music['comment'] = comment + custom_tag
+    music['lyrics'] = lyrics + custom_tag
     music.save()
 
     if CAPTION == "TRUE":
@@ -147,5 +118,11 @@ async def tag(bot, m):
     except Exception as e:
         print(e)
 
+def get_cleaned_tags(tag):
+    if tag.__contains__("@") or tag.__contains__(".me/"):
+        tag = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', tag).replace('  ', ' ')
+    if tag.startswith(' '):
+        tag = tag.split(' ', 1)[+1]
+    return tag
 
 Bot.run()
