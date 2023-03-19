@@ -50,16 +50,11 @@ async def start(bot, update):
 
    
 @Bot.on_message(filters.private & filters.audio)
-async def tag(bot, m):
+async def autotag(bot, m):
     fname = m.audio.file_name
     await m.download("temp/file.mp3")
     music = load_file("temp/file.mp3")
-    t = f"{music['title']}"
-    a = f"{music['artist']}"
-    al = f"{music['album']}"
-    g = f"{music['genre']}"
-    c = f"{music['comment']}"
-    l = f"{music['lyrics']}"
+
     try:
         artwork = music['artwork']
         image_data = artwork.value.data
@@ -123,5 +118,11 @@ async def tag(bot, m):
     except Exception as e:
         print(e)
 
+def get_cleaned_tags(tag):
+    if tag.__contains__("@") or tag.__contains__(".me/"):
+        tag = re.sub(r'\S*[t|T].me\S*|\S*@\S*', '', tag).replace('  ', ' ')
+    if tag.startswith(' '):
+        tag = tag.split(' ', 1)[+1]
+    return tag
 
 Bot.run()
